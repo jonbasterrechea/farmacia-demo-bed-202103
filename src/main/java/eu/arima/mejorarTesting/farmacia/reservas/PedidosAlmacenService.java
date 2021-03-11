@@ -30,8 +30,8 @@ public class PedidosAlmacenService {
     public Optional<PedidoAlmacen> realizarPedido(Long idMedicamento, Integer unidades) {
         try {
             Long idReservaAlmacen = almacenClient.solicitarReservaMedicamento(idMedicamento, unidades);
-            return  Optional.of(pedidosAlmacenRepository
-                            .save(new PedidoAlmacen(idReservaAlmacen, idMedicamento, unidades)));
+            return Optional.of(pedidosAlmacenRepository
+                    .save(new PedidoAlmacen(idReservaAlmacen, idMedicamento, unidades)));
 
         } catch (Exception e) {
             //capturamos la excepción porque en realidad lo tratamos ya que queremos devolver empty

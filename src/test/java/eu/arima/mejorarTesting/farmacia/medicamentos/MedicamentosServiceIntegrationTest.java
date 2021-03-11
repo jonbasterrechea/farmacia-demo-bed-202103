@@ -25,10 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class MedicamentosServiceIntegrationTest {
 
     @Container
-    private final static PostgreSQLContainer postgresContainer = new PostgreSQLContainer(DockerImageName.parse("postgres:13"));
+    private final static PostgreSQLContainer postgresContainer = new PostgreSQLContainer(DockerImageName
+            .parse("postgres:13"));
 
     @DynamicPropertySource
-    static void databaseProperties(DynamicPropertyRegistry registry){
+    static void databaseProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", postgresContainer::getJdbcUrl);
         registry.add("spring.datasource.username", postgresContainer::getUsername);
         registry.add("spring.datasource.password", postgresContainer::getPassword);

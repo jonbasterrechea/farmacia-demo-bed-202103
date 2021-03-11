@@ -30,8 +30,8 @@ public class AlmacenClient {
             put("unidadesReservar", unidades);
         }};
         return almacenWebClient.post().uri(RESERVAR_MEDICAMENTO_PATH)
-                                      .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                                      .body(BodyInserters.fromValue(data)).retrieve()
-                                      .bodyToMono(Long.class).block();
+                               .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                               .body(BodyInserters.fromValue(data)).retrieve()
+                               .bodyToMono(Long.class).block();
     }
 }

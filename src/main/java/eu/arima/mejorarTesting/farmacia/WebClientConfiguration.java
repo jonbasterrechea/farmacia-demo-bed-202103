@@ -9,6 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class WebClientConfiguration {
     @Value("${almacen-server.url:http://localhost:9091/almacen}")
     String almacenServerUrl;
+
     @Bean
     public WebClient almacenWebClient(WebClient.Builder webClientBuilder) {
         return webClientBuilder.baseUrl(almacenServerUrl).build();

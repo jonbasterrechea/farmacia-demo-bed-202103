@@ -69,6 +69,7 @@ public class PedidoAlmacen {
     public void setFechaPedido(LocalDate fechaPedido) {
         this.fechaPedido = fechaPedido;
     }
+
     @PrePersist
     void prePersist() {
         this.fechaPedido = LocalDate.now();

@@ -28,17 +28,17 @@ public class ReservasService {
         Medicamento medicamento = medicamentosRepository.findById(idMedicamento).orElseThrow();
         int unidadesReserva = unidades;
         int unidadesPendientes = 0;
-        if (!medicamento.tieneStockSuficiente(unidades)){
+        if (!medicamento.tieneStockSuficiente(unidades)) {
             unidadesReserva = medicamento.getUnidadesStock();
             unidadesPendientes = unidades - unidadesReserva;
-            pedidosAlmacenService.realizarPedido(idMedicamento, (int)(unidadesPendientes * FACTOR_PEDIDO_ALMACEN));
+            pedidosAlmacenService.realizarPedido(idMedicamento, (int) (unidadesPendientes * FACTOR_PEDIDO_ALMACEN));
         }
         InfoRecogidaReserva infoRecogidaReserva = null;
         if (unidadesReserva > 0) {
             Reserva reserva = reservasRepository.save(new Reserva(idMedicamento, unidadesReserva));
             medicamento.disminuirStock(unidadesReserva);
             medicamentosRepository.save(medicamento);
-            infoRecogidaReserva =  new InfoRecogidaReserva(reserva.getId(), unidadesReserva, unidadesPendientes);
+            infoRecogidaReserva = new InfoRecogidaReserva(reserva.getId(), unidadesReserva, unidadesPendientes);
         }
         return infoRecogidaReserva != null ? infoRecogidaReserva : new InfoRecogidaReserva(unidadesReserva, unidadesPendientes);
     }
