@@ -1,5 +1,6 @@
 package eu.arima.mejorarTesting.farmacia.reservas;
 
+import eu.arima.mejorarTesting.farmacia.UnitTest;
 import eu.arima.mejorarTesting.farmacia.medicamentos.Medicamento;
 import eu.arima.mejorarTesting.farmacia.medicamentos.MedicamentosRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@UnitTest
 class ReservasServiceTest {
 
     public static final long ID_MED = 1L;
