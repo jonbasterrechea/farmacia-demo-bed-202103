@@ -7,9 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
@@ -48,49 +48,60 @@ class ReservasServiceTest {
     @DisplayName("reservarMedicamento si en la farmacia hay stock suficiente del medicamento")
     class SiHayStock {
 
-        public static final int STOCK = 10;
+        public static final int STOCK_MAYOR = 10;
+        private static final int STOCK_IGUAL = UNIDADES;
         private Reserva reserva;
 
         @BeforeEach
         void setUp() {
-            medicamento.setUnidadesStock(STOCK);
-
             reserva = new Reserva(ID_MED, UNIDADES);
             when(reservasRepository
                     .save(argThat(r -> r.getIdMedicamento() == ID_MED && r.getUnidades() == UNIDADES)))
                     .thenReturn(reserva);
         }
 
-        @Test
+        @ParameterizedTest
+        @ValueSource(ints = {STOCK_MAYOR, STOCK_IGUAL})
         @DisplayName("se genera una reserva con el total de las unidades solicitadas")
-        void reserva_con_todas_unidades() {
+        void reserva_con_todas_unidades(int stockMedicamento) {
+            medicamento.setUnidadesStock(stockMedicamento);
+
             reservasService.reservarMedicamento(ID_MED, UNIDADES);
 
             verify(reservasRepository)
                     .save(argThat(r -> r.getIdMedicamento() == ID_MED && r.getUnidades() == UNIDADES));
         }
 
-        @Test
+        @ParameterizedTest
+        @ValueSource(ints = {STOCK_MAYOR, STOCK_IGUAL})
         @DisplayName("se genera la información de recogida a partir de la reserva en la farmacia")
-        void genera_informacion_recogida_reserva_farmacia() {
+        void genera_informacion_recogida_reserva_farmacia(int stockMedicamento) {
+            medicamento.setUnidadesStock(stockMedicamento);
+
             reserva.setId(ID_RES);
             InfoRecogidaReserva resultado = reservasService.reservarMedicamento(ID_MED, UNIDADES);
 
             assertEquals(new InfoRecogidaReserva(ID_RES, UNIDADES, 0), resultado);
         }
 
-        @Test
+        @ParameterizedTest
+        @ValueSource(ints = {STOCK_MAYOR, STOCK_IGUAL})
         @DisplayName("se actualiza la cantidad de stock del medicamento")
-        void actualiza_stock_medicamento() {
+        void actualiza_stock_medicamento(int stockMedicamento) {
+            medicamento.setUnidadesStock(stockMedicamento);
+
             reservasService.reservarMedicamento(ID_MED, UNIDADES);
             assertAll("Actualización deseada del medicamento",
-                    () -> assertEquals(STOCK - UNIDADES, medicamento.getUnidadesStock()),
+                    () -> assertEquals(stockMedicamento - UNIDADES, medicamento.getUnidadesStock()),
                     () -> verify(medicamentosRepository).save(medicamento));
         }
 
-        @Test
+        @ParameterizedTest
+        @ValueSource(ints = {STOCK_MAYOR, STOCK_IGUAL})
         @DisplayName("no se hacen pedidos al almacen")
-        void no_se_hacen_pedidos_al_almacen(){
+        void no_se_hacen_pedidos_al_almacen(int stockMedicamento) {
+            medicamento.setUnidadesStock(stockMedicamento);
+
             reservasService.reservarMedicamento(ID_MED, UNIDADES);
 
             verify(pedidosAlmacenService, never()).realizarPedido(anyLong(), anyInt());
@@ -149,7 +160,7 @@ class ReservasServiceTest {
             void reserva_almacen_con_unidades_restantes() {
                 reservasService.reservarMedicamento(ID_MED, UNIDADES);
 
-                int unidadesAlmacen = (int)((UNIDADES - STOCK) * 1.5);
+                int unidadesAlmacen = (int) ((UNIDADES - STOCK) * 1.5);
                 verify(pedidosAlmacenService).realizarPedido(ID_MED, unidadesAlmacen);
             }
 
@@ -178,7 +189,7 @@ class ReservasServiceTest {
             void reserva_sin_stock_devuelve_empty() {
                 InfoRecogidaReserva resultado = reservasService.reservarMedicamento(ID_MED, UNIDADES);
 
-                assertEquals(new InfoRecogidaReserva(0,UNIDADES), resultado);
+                assertEquals(new InfoRecogidaReserva(0, UNIDADES), resultado);
             }
 
             @Test
@@ -186,7 +197,7 @@ class ReservasServiceTest {
             void reserva_almacen_con_unidades_restantes() {
                 reservasService.reservarMedicamento(ID_MED, UNIDADES);
 
-                int unidadesAlmacen = (int)(UNIDADES * 1.5);
+                int unidadesAlmacen = (int) (UNIDADES * 1.5);
                 verify(pedidosAlmacenService).realizarPedido(ID_MED, unidadesAlmacen);
             }
         }
