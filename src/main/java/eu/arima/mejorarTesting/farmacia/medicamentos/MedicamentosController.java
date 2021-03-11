@@ -1,9 +1,6 @@
 package eu.arima.mejorarTesting.farmacia.medicamentos;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/medicamentos")
@@ -18,6 +15,11 @@ public class MedicamentosController {
     @GetMapping("/{idMedicamento}")
     Medicamento getMedicamento(@PathVariable long idMedicamento) {
         return medicamentosService.getMedicamento(idMedicamento);
+    }
+
+    @PutMapping
+    void actualizarStock(@RequestBody MedicamentoStockDTO medicamentoStockDTO) {
+        medicamentosService.actualizarStock(medicamentoStockDTO.getId(), medicamentoStockDTO.getUnidades());
     }
 
 }
